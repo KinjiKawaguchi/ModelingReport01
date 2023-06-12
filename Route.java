@@ -4,27 +4,34 @@ import java.util.HashMap;
 class Route {
     private String name;
     private ArrayList<Station> stations;
-    private HashMap<StationPair, TravelTime> travelTimes;
+    private HashMap<Station, PassengerFlow> passengerFlows;
+    private HashMap<StationPair, Integer> travelTimes;
+    private final int MAX_PASSENGERS = 1300;
 
-    public Route(String name){
+    public Route(String name) {
         this.name = name;
         this.stations = new ArrayList<Station>();
-        this.travelTimes = new HashMap<StationPair,TravelTime>();
+        this.passengerFlows = new HashMap<Station, PassengerFlow>();
+        this.travelTimes = new HashMap<StationPair, Integer>();
     }
 
-    public void addStation(Station station){
+    public void addStation(Station station) {
         this.stations.add(station);
     }
 
-    public void travelTimes(StationPair stationPair,TravelTime travelTime){
-        this.travelTimes.put(stationPair,travelTime);
+    public void addPassengerFlow(Station station, PassengerFlow passengerFlow) {
+        this.passengerFlows.put(station, passengerFlow);
     }
 
-    public void addTravelTime(Station from, Station to, TravelTime time) {
+    public void travelTimes(StationPair stationPair,  Integer travelTime) {
+        this.travelTimes.put(stationPair, travelTime);
+    }
+
+    public void addTravelTime(Station from, Station to, Integer time) {
         this.travelTimes.put(new StationPair(from, to), time);
     }
 
-    //get and set methods
+    // get and set methods
     public String getName() {
         return this.name;
     }
@@ -41,12 +48,19 @@ class Route {
         this.stations = stations;
     }
 
-    public HashMap<StationPair, TravelTime> getTravelTimes() {
+    public HashMap<Station, PassengerFlow> getPassengerFlows() {
+        return this.passengerFlows;
+    }
+
+    public void setPassengerFlows(HashMap<Station, PassengerFlow> passengerFlows) {
+        this.passengerFlows = passengerFlows;
+    }
+
+    public HashMap<StationPair, Integer> getTravelTimes() {
         return this.travelTimes;
     }
 
-    public void setTravelTimes(HashMap<StationPair, TravelTime> travelTimes) {
+    public void setTravelTimes(HashMap<StationPair, Integer> travelTimes) {
         this.travelTimes = travelTimes;
     }
 }
-

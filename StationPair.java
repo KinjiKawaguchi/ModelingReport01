@@ -1,6 +1,6 @@
 import java.util.Objects;
 
-public class StationPair {
+class StationPair {
     private Station from;
     private Station to;
 
