@@ -15,6 +15,10 @@ class Route {
         this.travelTimes = new HashMap<StationPair, Integer>();
     }
 
+    public int getMaxPassengers(){
+        return this.MAX_PASSENGERS;
+    }
+
     public void addStation(Station station) {
         this.stations.add(station);
     }

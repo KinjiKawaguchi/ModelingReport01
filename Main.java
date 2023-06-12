@@ -33,6 +33,8 @@ public class Main {
         Train trains[] = defineTrains();
 
         printTimetable(trains);
+
+        printCongestionInfo(trains);
     }
 
     public static void printTimetable(Train[] trains) {
@@ -53,7 +55,24 @@ public class Main {
         }
     }
 
-    public static void printCongestionInfo(Train train) {
+    public static void printCongestionInfo(Train[] trains) {
+        System.out.println("=== 列車混雑情報 ===");
+        for (Train train : trains) {
+            System.out.println(train.getName() + " (" + train.getRoute().getName() + ")");
+            int totalPassengers = 0;
+            for (int i = 0; i < train.getRoute().getStations().size() - 1; i++) {
+                StationPair stationPair = new StationPair(train.getRoute().getStations().get(i),
+                        train.getRoute().getStations().get(i + 1));
+                PassengerFlow passengers = train.getRoute().getPassengerFlows().get(stationPair.getFrom());
+                int passengersIn = passengers.getPassengersIn();
+                int passengersOut = passengers.getPassengersOut();
+                totalPassengers += passengersIn - passengersOut;
+                double congestionRate = (double) totalPassengers / train.getRoute().getMaxPassengers() * 100;
+                System.out.println(stationPair.getFrom().getName() + " - " + stationPair.getTo().getName() + ": "
+                        + congestionRate + "%");
+            }
+            System.out.println();
+        }
     }
 
     public static Train[] defineTrains() {
