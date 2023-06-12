@@ -1,4 +1,5 @@
 import java.time.LocalTime;
+import java.util.List;
 
 public class Main {
     // 駅の定義
@@ -20,7 +21,7 @@ public class Main {
     private static Station Kyoto = new Station("Kyoto", "Kansai");
     private static Station ShinOsaka = new Station("ShinOsaka", "Kansai");
 
-    //路線の定義
+    // 路線の定義
     private static Route Nozomi = new Route("Nozomi");
     private static Route HikariNoShizuoka = new Route("HikariNoShizuoka");
     private static Route HikariStopsShizuoka = new Route("HikariStopsShizuoka");
@@ -28,6 +29,41 @@ public class Main {
 
     public static void main(String[] args) {
         DefineDatas();
+
+        Train trains[] = defineTrains();
+
+        printTimetable(trains);
+    }
+
+    public static void printTimetable(Train[] trains) {
+        System.out.println("=== 時刻表 ===");
+        for (Train train : trains) {
+            System.out.println(train.getName() + " (" + train.getRoute().getName() + ")");
+            LocalTime time = train.getDepartureTime();
+            List<Station> stations = train.getRoute().getStations();
+            for (int i = 0; i < stations.size() - 1; i++) {
+                StationPair stationPair = new StationPair(stations.get(i), stations.get(i + 1));
+                System.out.println(stationPair.getFrom().getName() + " " + time);
+                time = time.plusMinutes(train.getRoute().getTravelTimes().get(stationPair));
+            }
+            // 終点の到着時間を表示する
+            Station lastStation = stations.get(stations.size() - 1);
+            System.out.println(lastStation.getName() + " " + time);
+            System.out.println();
+        }
+    }
+
+    public static void printCongestionInfo(Train train) {
+    }
+
+    public static Train[] defineTrains() {
+        Train Train1 = new Train("Nozomi1Gou", Nozomi, LocalTime.of(6, 0));
+        Train Train2 = new Train("Nozomi3Gou", Nozomi, LocalTime.of(6, 15));
+        Train Train3 = new Train("Hikari631Gou", HikariNoShizuoka, LocalTime.of(6, 21));
+        Train Train4 = new Train("Kodama701Gou", Kodama, LocalTime.of(6, 30));
+        Train Train5 = new Train("Hikari501Gou", HikariStopsShizuoka, LocalTime.of(7, 3));
+        Train trains[] = { Train1, Train2, Train3, Train4, Train5 };
+        return trains;
     }
 
     public static void DefineDatas() {
@@ -41,10 +77,9 @@ public class Main {
                 Kakegawa, Hamamatsu, Toyohashi, MikawaAnjo, Nagoya, Gifuhashima, Maibara, Kyoto, ShinOsaka };
         Station StopsList[][] = { NozomiStop, HikariNoShizuokaStop, HikariStopsShizuokaStop, KodamaStop };
 
-
         Route RouteList[] = { Nozomi, HikariNoShizuoka, HikariStopsShizuoka, Kodama };
 
-        //駅間移動所要時間(分単位)定義
+        // 駅間移動所要時間(分単位)定義
         int NozomiTravelTimes[] = { 7, 11, 83, 35, 24 };
         int HikariNoShizuokaTravelTimes[] = { 7, 11, 16, 67, 16, 18, 20, 14 };
         int HikariStopsShizuokaTravelTimes[] = { 7, 11, 46, 24, 30, 40, 14 };
@@ -52,7 +87,7 @@ public class Main {
         int TravelTimesList[][] = { NozomiTravelTimes, HikariNoShizuokaTravelTimes, HikariStopsShizuokaTravelTimes,
                 KodamaTravelTimes };
 
-        //各駅乗降人数定義({乗車人数,降車人数})
+        // 各駅乗降人数定義({乗車人数,降車人数})
         int NozomiPassengers[][] = { { 1100, 0 }, { 300, 100 }, { 250, 150 }, { 200, 500 }, { 300, 300 }, { 0, 1000 } };
         int HikariNoShizuokaPassengers[][] = { { 800, 0 }, { 400, 100 }, { 250, 250 }, { 150, 200 }, { 350, 350 },
                 { 150, 100 }, { 200, 150 }, { 500, 300 }, { 0, 700 } };
@@ -64,7 +99,7 @@ public class Main {
         int PassengersList[][][] = { NozomiPassengers, HikariNoShizuokaPassengers, HikariStopsShizuokaPassengers,
                 KodamaPassengers };
 
-        //データをコンストラクタに当てはめ
+        // データをコンストラクタに当てはめ
         for (int i = 0; i < RouteList.length; i++) {
             DefineStops(RouteList[i], StopsList[i]);
             DefineTravelTimes(RouteList[i], TravelTimesList[i]);
@@ -72,7 +107,7 @@ public class Main {
         }
     }
 
-    //列車と駅を紐づけ
+    // 列車と駅を紐づけ
     public static void DefineStops(Route route, Station[] stops) {
         for (Station Stop : stops) {
             Stop.addRoute(route);
@@ -80,14 +115,14 @@ public class Main {
         }
     }
 
-    //駅間移動所要時間を代入
+    // 駅間移動所要時間を代入
     public static void DefineTravelTimes(Route route, int[] travelTimes) {
         for (int i = 0; i < travelTimes.length; i++) {
             route.addTravelTime(route.getStations().get(i), route.getStations().get(i + 1), travelTimes[i]);
         }
     }
 
-    //各駅乗降者人数を代入
+    // 各駅乗降者人数を代入
     public static void DefinePassengerFlows(Route route, Station[] stops, int[][] passengers) {
         for (int i = 0; i < passengers.length; i++) {
             route.addPassengerFlow(route.getStations().get(i),

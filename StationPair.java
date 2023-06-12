@@ -27,19 +27,19 @@ class StationPair {
     }
 
     //get and set methods
-    public Station getfrom() {
+    public Station getFrom() {
         return this.from;
     }
 
-    public void setfrom(Station from) {
+    public void setFrom(Station from) {
         this.from = from;
     }
 
-    public Station getto() {
+    public Station getTo() {
         return this.to;
     }
 
-    public void setto(Station to) {
+    public void setTo(Station to) {
         this.to = to;
     }
 }
