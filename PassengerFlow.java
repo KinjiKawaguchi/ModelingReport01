@@ -1,9 +1,9 @@
-class PassangerFlow {
+class PassengerFlow {
     private Station station;
     private int passengersIn;
     private int passengersOut;
 
-    public PassangerFlow(Station station, int passengersIn, int passengersOut) {
+    public PassengerFlow(Station station, int passengersIn, int passengersOut) {
         this.station = station;
         this.passengersIn = passengersIn;
         this.passengersOut = passengersOut;
