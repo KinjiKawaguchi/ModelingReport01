@@ -1,6 +1,4 @@
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Scanner;
 
 public class Main {
     // 駅の定義
@@ -28,219 +26,22 @@ public class Main {
     private static Route HikariStopsShizuoka = new Route("HikariStopsShizuoka");
     private static Route Kodama = new Route("Kodama");
 
-    private static Route RouteList[] = { Nozomi, HikariNoShizuoka, HikariStopsShizuoka, Kodama };
+    public static Route RouteList[] = { Nozomi, HikariNoShizuoka, HikariStopsShizuoka, Kodama };
 
-    private static Train[] trains;
+    public static Train[] trains;
 
-    private static Station[] AllStaions = { Tokyo, Shinagawa, ShinYokohama, Odawara, Atami, Mishima, ShinFuji, Shizuoka,
+    public static Station[] AllStations = { Tokyo, Shinagawa, ShinYokohama, Odawara, Atami, Mishima, ShinFuji, Shizuoka,
             Kakegawa, Hamamatsu, Toyohashi, MikawaAnjo, Nagoya, Gifuhashima, Maibara, Kyoto, ShinOsaka };
 
     public static void main(String[] args) {
         // 用意された列車データの格納
         DefineDatas();
         trains = defineTrains();
-
-        // オプションとプログラムの実行
+        // ユーザインターフェースの実行
+        ConsoleOperator co = new ConsoleOperator();
         boolean continueIs = true;
-        Scanner scanner = new Scanner(System.in);
-        while (continueIs) {
-            displayOption(0);
-            continueIs = getInput(scanner, 0);
-        }
-    }
-
-    public static void displayOption(int displayFlag) {
-        switch (displayFlag) {
-            case 0:
-                System.out.println("1. 時刻表の表示");
-                System.out.println("2. 混雑度の表示");
-                System.out.println("3. 終了");
-                break;
-            case 1:
-                System.out.println("1.発車駅から絞り込み");
-                System.out.println("2.到着駅から絞り込み");
-                System.out.println("3.発車時間から絞り込み");
-                System.out.println("4.到着時間から絞り込み");
-                System.out.println("5.列車タイプから絞り込み");
-                System.out.println("6.到着駅から絞り込み");
-                break;
-            case 2:// 全駅リストの選択肢を表示
-                for (int i = 0; i < AllStaions.length; i++) {
-                    System.out.println(i + "." + AllStaions[i].getName());
-                }
-                break;
-            case 3:// 全路線リストの選択肢を表示
-                for (int i = 0; i < RouteList.length; i++) {
-                    System.out.println(i + "." + RouteList[i].getName());
-                }
-                break;
-            default:
-                System.err.println("Error: displayFlag incorrect");
-                System.exit(0);
-        }
-    }
-
-    public static boolean getInput(Scanner scanner, int getInputFlag) {
-        int input = scanner.nextInt();
-        switch (getInputFlag) {
-            case 0:
-                switch (input) {
-                    case 1:
-                        displayOption(1);
-                        getInput(scanner, 1);
-                        printTimetable(trains);
-                        return true;
-                    case 2:
-                        displayOption(1);
-                        getInput(scanner, 1);
-                        printCongestionInfo(trains);
-                        return true;
-                    case 3:
-                        System.out.println("終了します");
-                        scanner.close();
-                        return false;
-                    default:
-                        System.out.println("1~3の数字を入力してください");
-                        return true;
-                }
-            case 1:/*ここの処理を書く必要があります。スパゲッティコード警報発令*/
-                switch (input) {
-                    case 1:
-                        printTimetable(trains);
-                        return true;
-                    case 2:
-                        System.out.println("発車駅を入力してください");
-                        displayOption(2);
-                        String departureStation = scanner.next();
-                        printTimetable(trains);
-                        return true;
-                    case 3:
-                        System.out.println("到着駅を入力してください");
-                        displayOption(2);
-                        String arrivalStation = scanner.next();
-                        printTimetable(trains);
-                        return true;
-                    case 4:
-                        System.out.println("発車時間を入力してください");
-                        /*
-                         * ここに発車時間の入力を受け付ける処理を書く
-                         */
-                        String departureTime = scanner.next();
-                        printTimetable(trains);
-                        return true;
-                    case 5:
-                        System.out.println("到着時間を入力してください");
-                        /*
-                         * ここに到着時間の入力を受け付ける処理を書く
-                         */
-                        String arrivalTime = scanner.next();
-                        printTimetable(trains);
-                        return true;
-                    case 6:
-                        System.out.println("列車タイプを入力してください");
-                        displayOption(3);
-                        String trainType = scanner.next();
-                        printTimetable(trains);
-                        return true;
-                    case 7:
-                        System.out.println("到着駅を入力してください");
-                        displayOption(2);
-                        String StopStation = scanner.next();
-                        printTimetable(trains);
-                        return true;
-                    default:
-                        System.out.println("1~6の数字を入力してください");
-                        return true;
-                }
-            case 2:
-                if(input < AllStaions.length && input >= 0){
-                    /*
-                     * ここに処理を書く
-                     */
-                    return true;
-                }else if(input < 0){
-                    System.out.println("0以上の数字を入力してください");
-                    return true;
-                }else{
-                    /*
-                     * ここに処理を書く
-                     */
-                    return false;
-                }
-            default:
-                System.err.println("Error: getInputFlag incorrect");
-                System.exit(0);
-                return false;
-        }
-    }
-
-    public static void printTimetable(Train train) {
-        System.out.println(train.getName() + " (" + train.getRoute().getName() + ")");
-        LocalTime time = train.getDepartureTime();
-        List<Station> stations = train.getRoute().getStations();
-        for (int i = 0; i < stations.size() - 1; i++) {
-            StationPair stationPair = new StationPair(stations.get(i), stations.get(i + 1));
-            System.out.println(stationPair.getFrom().getName() + " " + time);
-            time = time.plusMinutes(train.getRoute().getTravelTimes().get(stationPair));
-        }
-        // 終点の到着時間を表示する
-        Station lastStation = stations.get(stations.size() - 1);
-        System.out.println(lastStation.getName() + " " + time);
-        System.out.println();
-    }
-
-    public static void printCongestionInfo(Train train) {
-        System.out.println(train.getName() + " (" + train.getRoute().getName() + ")");
-        int totalPassengers = 0;
-        for (int i = 0; i < train.getRoute().getStations().size() - 1; i++) {
-            StationPair stationPair = new StationPair(train.getRoute().getStations().get(i),
-                    train.getRoute().getStations().get(i + 1));
-            PassengerFlow passengers = train.getRoute().getPassengerFlows().get(stationPair.getFrom());
-            int passengersIn = passengers.getPassengersIn();
-            int passengersOut = passengers.getPassengersOut();
-            totalPassengers += passengersIn - passengersOut;
-            double congestionRate = (double) totalPassengers / train.getRoute().getMaxPassengers() * 100;
-            System.out.println(stationPair.getFrom().getName() + " - " + stationPair.getTo().getName() + ": "
-                    + congestionRate + "%");
-        }
-        System.out.println();
-    }
-
-    public static void printTimetable(Train[] trains) {
-        System.out.println("=== 時刻表 ===");
-        for (Train train : trains) {
-            System.out.println(train.getName() + " (" + train.getRoute().getName() + ")");
-            LocalTime time = train.getDepartureTime();
-            List<Station> stations = train.getRoute().getStations();
-            for (int i = 0; i < stations.size() - 1; i++) {
-                StationPair stationPair = new StationPair(stations.get(i), stations.get(i + 1));
-                System.out.println(stationPair.getFrom().getName() + " " + time);
-                time = time.plusMinutes(train.getRoute().getTravelTimes().get(stationPair));
-            }
-            // 終点の到着時間を表示する
-            Station lastStation = stations.get(stations.size() - 1);
-            System.out.println(lastStation.getName() + " " + time);
-            System.out.println();
-        }
-    }
-
-    public static void printCongestionInfo(Train[] trains) {
-        System.out.println("=== 列車混雑情報 ===");
-        for (Train train : trains) {
-            System.out.println(train.getName() + " (" + train.getRoute().getName() + ")");
-            int totalPassengers = 0;
-            for (int i = 0; i < train.getRoute().getStations().size() - 1; i++) {
-                StationPair stationPair = new StationPair(train.getRoute().getStations().get(i),
-                        train.getRoute().getStations().get(i + 1));
-                PassengerFlow passengers = train.getRoute().getPassengerFlows().get(stationPair.getFrom());
-                int passengersIn = passengers.getPassengersIn();
-                int passengersOut = passengers.getPassengersOut();
-                totalPassengers += passengersIn - passengersOut;
-                double congestionRate = (double) totalPassengers / train.getRoute().getMaxPassengers() * 100;
-                System.out.println(stationPair.getFrom().getName() + " - " + stationPair.getTo().getName() + ": "
-                        + congestionRate + "%");
-            }
-            System.out.println();
+        while(continueIs){
+            continueIs = co.execute();
         }
     }
 
