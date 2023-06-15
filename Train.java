@@ -22,14 +22,42 @@ public class Train {
     }
 
     public String getName() {
-        return name;
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Route getRoute() {
-        return route;
+        return this.route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     public LocalTime getDepartureTime() {
-        return departureTime;
+        return this.departureTime;
+    }
+
+    public void setDepartureTime(LocalTime departureTime) {
+        this.departureTime = departureTime;
+    }
+
+    public Station getDepartureStation() {
+        return this.departureStation;
+    }
+
+    public void setDepartureStation(Station departureStation) {
+        this.departureStation = departureStation;
+    }
+
+    public Station getArrivalStation() {
+        return this.arrivalStation;
+    }
+
+    public void setArrivalStation(Station arrivalStation) {
+        this.arrivalStation = arrivalStation;
     }
 }
