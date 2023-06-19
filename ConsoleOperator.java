@@ -9,7 +9,7 @@ public class ConsoleOperator {
     public boolean execute() {
         Scanner scanner = new Scanner(System.in);
         String action[] = getInput(scanner, new String[] { "1", "2", "3" },
-                new String[] { "列車の時刻表を表示する", "列車の時刻表を検索する", "終了" });
+                new String[] { "列車の時刻表を表示する", "列車の混雑度を表示する", "終了" });
         switch (Integer.parseInt(action[0])) {
             case 1:
                 executeDisplayTrainMenu(scanner);
@@ -50,13 +50,13 @@ public class ConsoleOperator {
                 printTrainInfo(filteredTrains);
                 break;
             case 4:
-                int[] departureTime = getTimeInput(scanner, "発車時間を入力してください");
+                int[] departureTime = getTimeInput(scanner, "発車時間を入力してください。[hh:mm]");
                 filteredTrains = filterByDepartureTime(departureTime);
                 printTrainInfo(filteredTrains);
                 break;
             case 5:
                 String routeName_tmp[] = new String[Main.RouteList.length];
-                for (int i = 0; i > Main.RouteList.length; i++) {
+                for (int i = 0; i < Main.RouteList.length; i++) {
                     routeName_tmp[i] = Main.RouteList[i].getName();
                 }
                 String[] selectedTrainType = getInput(scanner, new String[] { "1", "2", "3", "4" }, routeName_tmp);
@@ -95,7 +95,7 @@ public class ConsoleOperator {
                 filteredTrains.add(train);
             }
         }
-        Train[] array = (Train[]) filteredTrains.toArray();
+        Train[] array = filteredTrains.toArray(new Train[0]);
         return array;
     }
 
@@ -106,18 +106,22 @@ public class ConsoleOperator {
                 filteredTrains.add(train);
             }
         }
-        Train[] array = (Train[]) filteredTrains.toArray();
+        Train[] array = filteredTrains.toArray(new Train[0]);
         return array;
     }
 
     public Train[] filterByDepartureTime(int[] time) {
         ArrayList<Train> filteredTrains = new ArrayList<Train>();
+        boolean displayIs = false;
         for (Train train : Main.trains) {
-            if (train.getDepartureTime().getHour() == time[0] && train.getDepartureTime().getMinute() == time[1]) {
+            if(train.getDepartureTime().getHour() >= time[0] && train.getDepartureTime().getMinute() >= time[1]){
+                displayIs = true;
+            }
+            if(displayIs){
                 filteredTrains.add(train);
             }
         }
-        Train[] array = (Train[]) filteredTrains.toArray();
+        Train[] array = filteredTrains.toArray(new Train[0]);
         return array;
     }
 
@@ -128,7 +132,7 @@ public class ConsoleOperator {
                 filteredTrains.add(train);
             }
         }
-        Train[] array = (Train[]) filteredTrains.toArray();
+        Train[] array = filteredTrains.toArray(new Train[0]);
         return array;
     }
 
@@ -139,11 +143,15 @@ public class ConsoleOperator {
                 filteredTrains.add(train);
             }
         }
-        Train[] array = (Train[]) filteredTrains.toArray();
+        Train[] array = filteredTrains.toArray(new Train[0]);
         return array;
     }
 
     public void printTrainInfo(Train[] trains) {
+        if(trains.length == 0){
+            System.out.println("該当する列車はありませんでした");
+            return;
+        }
         String inputKey_tmp[] = new String[trains.length];
         String inputValue_tmp[] = new String[trains.length];
         for (int i = 0; i < trains.length; i++) {
@@ -153,7 +161,7 @@ public class ConsoleOperator {
         CONTINUE: while (true) {
             System.out.println("==該当列車==");
             for (Train train : trains) {
-                System.out.println(train.getName() + " " + train.getRoute().getName() + train.getDepartureStation()
+                System.out.println(train.getName() + " " + train.getRoute().getName() +" "+ train.getDepartureStation()
                         + train.getDepartureTime() + "発" + " " + train.getArrivalStation() + "行き");
             }
             System.out.println("詳細を表示しますか？");
@@ -229,7 +237,7 @@ public class ConsoleOperator {
     public static void printCongestionInfo(Train[] trains) {
         System.out.println("=== 列車混雑情報 ===");
         for (Train train : trains) {
-            //printCongestionInfo(train);///実装必須
+            // printCongestionInfo(train);///実装必須
         }
         System.out.println();
     }
@@ -256,8 +264,8 @@ public class ConsoleOperator {
             }
             System.out.println("入力が正しくありません");
         }
-            return new String[] {inputKeys[index], inputValues[index]};
-        }
+        return new String[] { inputKeys[index], inputValues[index] };
+    }
 
     public static int[] getTimeInput(Scanner scanner, String message) {
         int time[] = new int[2];
